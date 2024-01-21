@@ -8,4 +8,5 @@ No terminal: "flask shell" para abrir o prompt de comando, então "db.create_all
   Em seguida, "db.session.commit()". A session é a propriedade do db que armazena a conexão com o bando de dados, e o método commit é o que vai efetivar as mudanças feitas na tabela, se não der commit, não enviará a mudança.
   Em seguida, "exit()"
 
+1.25.00
   
