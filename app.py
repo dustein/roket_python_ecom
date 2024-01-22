@@ -1,13 +1,24 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+CORS(app)
 
 #definir caminho do banco de dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
 #iniciar conexao com o banco de dados
 db = SQLAlchemy(app)
-#Modelagem do banco em linhas e colunas (id,name,price,description)
+
+#Modelagem do banco em linhas e colunas
+#Modelagem Usuarios
+class User(db.Model, UserMixin):
+  id = db.Column(db.Integer, primary_key=True)
+  username = db.Column(db.String(10), nullable=False, unique=True)
+  password = db.Column(db.String(20), nullable=False)
+
+#Modelagem Produtos
 class Product(db.Model):
   # o id sera um numero inteiro, e sera a chave unica
   id = db.Column(db.Integer, primary_key=True)
@@ -83,15 +94,13 @@ def get_products():
       "id": product.id,
       "name": product.name,
       "price": product.price,
-      "description": product.description
+      # vamos deixar sem a descricao, quem quiser detalhe busca o produto especifico
+      # "description": product.description
     }
     products_list.append(product_data)
-    
+
   return products_list
 
-@app.route('/')
-def hello_world():
-  return "Hello World!"
 
 if __name__ == "__main__":
   app.run(debug=True)
