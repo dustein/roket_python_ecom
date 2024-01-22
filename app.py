@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -24,6 +24,7 @@ class User(db.Model, UserMixin):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(10), nullable=False, unique=True)
   password = db.Column(db.String(20), nullable=False)
+  cart = db.relationship('CartItem', backref='user', lazy=True)
 
 #Modelagem Produtos
 class Product(db.Model):
@@ -41,7 +42,6 @@ class CartItem(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
   product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-  
 
 # Autenticação
 @login_manager.user_loader
@@ -147,6 +147,19 @@ def get_products():
     products_list.append(product_data)
 
   return products_list
+
+# rotas de checkout
+
+@app.route('/api/cart/add/<int:product_id>', methods=['POST'])
+@login_required
+def add_to_cart(product_id):
+
+  # recuperamos o user, com o current_user, cujo resultado será uma inst6ancia do User
+  user = User.query.get(int(current_user.id))
+  product = Product.query.get(int(product_id))
+
+  if user and product:
+    
 
 
 if __name__ == "__main__":

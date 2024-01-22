@@ -32,6 +32,12 @@ E vamos modificar o modelo de User para incluir o cart (carrinho) fazendo uma as
 A propriedade backref serve para associar um item ao carrinho, e através do user, consegue recuperar o item do cart.
 Por fim, o método lazy é para que não sejam recuperados a cada vez que carregar/recuperar informação do user, como para checar autenticação, todos os objetos do carrinho, o que causaria lentidão no processo quando houver uma quantidade muito grande de itens. Assim, o lazy fará com que as informações referentes aos itens no carrinho sejam carregadas apenas quando o user acessar algum processo específico que precise carregar estas informações.
 
+Após essas modificações, precisamos derrubar e criar as tabelas novamente, com a modelagem atualizada.
+
+- Agora criação das rotas do cart: add, remove, checkout and clean.
+
+Na configuração da rota de cart, usaremos do flask_login o método current_user, que é a informação do user logado no momento.
+
 
 
 2.33.00
