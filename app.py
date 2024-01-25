@@ -159,7 +159,8 @@ def add_to_cart(product_id):
   product = Product.query.get(int(product_id))
 
   if user and product:
-    
+    return jsonify({"message":"Item added do cart successfully..."})
+  return jsonify({"message":"Failed to add to cart!"}), 400
 
 
 if __name__ == "__main__":

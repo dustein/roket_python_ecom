@@ -40,4 +40,4 @@ Na configuração da rota de cart, usaremos do flask_login o método current_use
 
 
 
-2.33.00
+3.35.00
