@@ -156,9 +156,12 @@ def add_to_cart(product_id):
 
   # recuperamos o user, com o current_user, cujo resultado será uma inst6ancia do User
   user = User.query.get(int(current_user.id))
-  product = Product.query.get(int(product_id))
+  product = Product.query.get(product_id)
 
   if user and product:
+    cart_item = CartItem(user_id=user.id, product_id=product.id)
+    db.session.add(cart_item)
+    db.session.commit() 
     return jsonify({"message":"Item added do cart successfully..."})
   return jsonify({"message":"Failed to add to cart!"}), 400
 
