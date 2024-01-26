@@ -153,7 +153,6 @@ def get_products():
 @app.route('/api/cart/add/<int:product_id>', methods=['POST'])
 @login_required
 def add_to_cart(product_id):
-
   # recuperamos o user, com o current_user, cujo resultado será uma inst6ancia do User
   user = User.query.get(int(current_user.id))
   product = Product.query.get(product_id)
@@ -161,9 +160,19 @@ def add_to_cart(product_id):
   if user and product:
     cart_item = CartItem(user_id=user.id, product_id=product.id)
     db.session.add(cart_item)
-    db.session.commit() 
+    db.session.commit()
     return jsonify({"message":"Item added do cart successfully..."})
   return jsonify({"message":"Failed to add to cart!"}), 400
+
+@app.route('/api/cart/remove/<int:product_id>', methods=['DELETE'])
+def remove_from_cart(product_id):
+  #obs usamos o first() para que ele pegue o primeiro item encontrado nao entendi porque 
+  cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
+  if cart_item:
+    db.session.delete(cart_item)
+    db.session.commit()
+    return jsonify({"message": "Item removed successfull"})
+  return jsonify({"message":"Operation not successfull, product nto found"}), 400
 
 
 if __name__ == "__main__":
