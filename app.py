@@ -174,6 +174,35 @@ def remove_from_cart(product_id):
     return jsonify({"message": "Item removed successfull"})
   return jsonify({"message":"Operation not successfull, product nto found"}), 400
 
+@app.route('/api/cart', methods=['GET'])
+@login_required
+def view_cart():
+  user = User.query.get(current_user.id)
+  cart_items = user.cart
+  cart_content_to_show = []
+  # ATENCAO essa forma, em que ha consulta ao banco a cada iteracao, e muito intensiva em recursos, em uma aplicacao seria o que se faz na requisicao e recuperar todos os produtos de uma so vez ao inves de buscar cada item no banco de cada vez
+  for item in cart_items:
+    product = Product.query.get(item.product_id)
+    cart_content_to_show.append({
+                          "id": item.id,
+                          "user_id": item.user_id,
+                          "product_id": item.product_id,
+                          "product_name": product.name,
+                          "product_price": product.price
+                              })
+  return jsonify(cart_content_to_show)
+
+@app.route('/api/cart/checkout', methods=['POST'])
+@login_required
+def checkout():
+  user = User.query.get(current_user.id)
+  cart_items = user.cart
+  for item in cart_items:
+    db.session.delete(item)
+    
+  db.session.commit()
+  return jsonify({"message":"Checkout ok. Cart is empty!"})
+
 
 if __name__ == "__main__":
   app.run(debug=True)

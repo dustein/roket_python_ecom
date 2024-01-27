@@ -40,6 +40,6 @@ Na configuração da rota de cart, usaremos do flask_login o método current_use
 
 
 
-3.35.00
+4.09.00
 
 lost kittys
