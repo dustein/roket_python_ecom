@@ -40,6 +40,12 @@ Na configuração da rota de cart, usaremos do flask_login o método current_use
 
 Finalizada a API, vamos ao deploy na AWS, utilizando o Elastic Beanstalk.
 
+- Instalação da AWS Cli para podermos efetuar os comandos via terminal. No IAM do user, create acess key. No terminal, "aws configure", logar com as keys. Para ver os comandos possiveis, joga no google "aws cli beanstalk".
+Agora instalou outra cli, a EB CLI, que é mais específica para o Beanstalk e vai ajudar a abstrair com menos comandos.
+(git clone https://github.com/aws/aws-elastic-beanstalk-cli-setup.git)
+Testar a instalação no temrinal "eb --version"
+Tive que instalar o virtualenv (sudo apt install python3-virtualenv)
+
 
 
 
