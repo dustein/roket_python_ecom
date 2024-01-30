@@ -38,6 +38,10 @@ Após essas modificações, precisamos derrubar e criar as tabelas novamente, co
 
 Na configuração da rota de cart, usaremos do flask_login o método current_user, que é a informação do user logado no momento.
 
+Finalizada a API, vamos ao deploy na AWS, utilizando o Elastic Beanstalk.
+
+
+
 
 
 4.09.00
