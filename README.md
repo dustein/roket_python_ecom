@@ -50,6 +50,6 @@ Tive que instalar o virtualenv (sudo apt install python3-virtualenv)
 
 
 
-4.09.00
+4.41.00
 
 lost kittys
