@@ -44,7 +44,23 @@ Finalizada a API, vamos ao deploy na AWS, utilizando o Elastic Beanstalk.
 Agora instalou outra cli, a EB CLI, que é mais específica para o Beanstalk e vai ajudar a abstrair com menos comandos.
 (git clone https://github.com/aws/aws-elastic-beanstalk-cli-setup.git)
 Testar a instalação no temrinal "eb --version"
-Tive que instalar o virtualenv (sudo apt install python3-virtualenv)
+(Tive que instalar o virtualenv (sudo apt install python3-virtualenv))
+- Para configurar o EB, há uma exigência. O nome do arquivo tem que ser "application.py", bem como a variável que instancia "app" tem que se chamar "application". POrtanto tive que alterar esses nomes na API.
+https://docs.aws.amazon.com/pt_br/elasticbeanstalk/latest/dg/create-deploy-python-flask.html
+
+- No terminal usamos a EB CLI:
+"eb init -p python-3.11 flask-ecomm-api --region us-east-1"
+Em seguida, criamos o ambiente "eb create flask-env-dev" colocamos o -dev para lembrar que estamos em um ambiente de desenvolvimento.
+A AWS vai demorar uns 5 minutos e criar todos os recursos para o deploy, e quando terminar podemos dar CTRL+C para sair.
+
+Para abrir o servidor que fizemos o deploy, "eb open flask-ecomm-api"
+Para fazer update ou alterar a aplicação já feito o deploy, usamos "eb deploy flask-ecomm-ap"
+
+Para FINALIZAR a aplicação (lembre que AWS tem os limites free tier)
+"eb terminate flask-env-dev" e todos os recursos serão desprovisionados.
+
+
+
 
 
 

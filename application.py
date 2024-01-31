@@ -3,18 +3,20 @@ from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-CORS(app)
+application = Flask(__name__)
+CORS(application)
 #definir caminho do banco de dados
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
 # chave secreta exigida pelo LoginManager
-app.config['SECRET_KEY'] = 'minha_chave_secreta'
+application.config['SECRET_KEY'] = 'minha_chave_secreta'
+#para o jsonfy resultado ficar na ordem que eu quis (não alfabética)
+application.json.sort_keys = False
 # lib para administrar autenticacao login
 login_manager = LoginManager()
 #iniciar conexao com o banco de dados
-db = SQLAlchemy(app)
+db = SQLAlchemy(application)
 # configuracao da lib login
-login_manager.init_app(app)
+login_manager.init_app(application)
 # no login_view configuramos a rota que estabelecemos para login
 login_manager.login_view = 'login'
 
@@ -48,8 +50,29 @@ class CartItem(db.Model):
 def load_user(user_id):
   return User.query.get(int(user_id))
 
+#raiz
+@application.route('/', methods=['GET'])
+def init():
+  return jsonify({
+    "API":"e-Commerce treinamento Python Flask API",
+    "Rota":"Função da Rota",
+    "/login":"Login do adm cadastrado (adm)",
+    "/logout":"Logout do adm cadastrado",
+    "/login":"Login do adm cadastrado (adm)",
+    "/api/products/add":"Cadastrar um Produto",
+    "/api/products/delete/product_id":"Deletar um Produto pelo ID",
+    "/api/products/product_id":"Exibe um Produto pelo ID",
+    "/api/products/product_id":"Adm logado pode modificar o Produto",
+    "/api/products":"Lista todos os Produtos Cadastrados",
+    "/api/cart/add/product_id":"Coloca o Produto no carrinho pelo ID",
+    "/api/cart/remove/product_id":"Remove o Produto do carrinho pelo ID",
+    "/api/cart":"Exibe Produtos adicionados no carrinho",
+    "/api/cart/checkout":"Realiza o checkou e reseta carrinho",
+    "FIM":"API Finalizada v1"
+  })
+
 # rotas de login
-@app.route('/login', methods=['POST'])
+@application.route('/login', methods=['POST'])
 def login():
   data = request.json
   user = User.query.filter_by(username=data.get('username')).first()
@@ -65,14 +88,14 @@ def login():
     return jsonify({"message": "Login OK"})
   return jsonify({"message": "Credentials Unauthorized..."})
 
-@app.route('/logout', methods=['POST'])
+@application.route('/logout', methods=['POST'])
 @login_required
 def logout():
   logout_user()
   return jsonify({"message": "Logout successfully..."})
 
 # rotas dos produtos
-@app.route('/api/products/add', methods=["POST"])
+@application.route('/api/products/add', methods=["POST"])
 @login_required
 def add_product():
   data = request.json
@@ -85,7 +108,7 @@ def add_product():
   return jsonify({"message":"product data is invalid or not informed"}), 400
 
 # rota para delete product
-@app.route('/api/products/delete/<int:product_id>', methods=['DELETE'])
+@application.route('/api/products/delete/<int:product_id>', methods=['DELETE'])
 @login_required
 def delete_product(product_id):
   # recupera o produto buscando pelo id
@@ -98,7 +121,7 @@ def delete_product(product_id):
   # apagar da base de dados o produto encontrado
 
 # retorna resultado busca por id
-@app.route('/api/products/<int:product_id>', methods=['GET'])
+@application.route('/api/products/<int:product_id>', methods=['GET'])
 def get_product_details(product_id):
   product = Product.query.get(product_id)
   if product:
@@ -111,7 +134,7 @@ def get_product_details(product_id):
   return jsonify({"message":"This ID does not exist"}), 404
   
 # modifica item
-@app.route('/api/products/<int:product_id>', methods=['PUT'])
+@application.route('/api/products/<int:product_id>', methods=['PUT'])
 @login_required
 def update_product(product_id):
   product = Product.query.get(product_id)
@@ -131,7 +154,7 @@ def update_product(product_id):
   return jsonify({"message":"Product updated OK!"})
 
 # listar todos os produtos cadastrados
-@app.route('/api/products')
+@application.route('/api/products')
 def get_products():
   products = Product.query.all()
   products_list = []
@@ -150,7 +173,7 @@ def get_products():
 
 # rotas de checkout
 
-@app.route('/api/cart/add/<int:product_id>', methods=['POST'])
+@application.route('/api/cart/add/<int:product_id>', methods=['POST'])
 @login_required
 def add_to_cart(product_id):
   # recuperamos o user, com o current_user, cujo resultado será uma inst6ancia do User
@@ -164,7 +187,7 @@ def add_to_cart(product_id):
     return jsonify({"message":"Item added do cart successfully..."})
   return jsonify({"message":"Failed to add to cart!"}), 400
 
-@app.route('/api/cart/remove/<int:product_id>', methods=['DELETE'])
+@application.route('/api/cart/remove/<int:product_id>', methods=['DELETE'])
 def remove_from_cart(product_id):
   #obs usamos o first() para que ele pegue o primeiro item encontrado nao entendi porque 
   cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
@@ -174,7 +197,7 @@ def remove_from_cart(product_id):
     return jsonify({"message": "Item removed successfull"})
   return jsonify({"message":"Operation not successfull, product nto found"}), 400
 
-@app.route('/api/cart', methods=['GET'])
+@application.route('/api/cart', methods=['GET'])
 @login_required
 def view_cart():
   user = User.query.get(current_user.id)
@@ -192,7 +215,7 @@ def view_cart():
                               })
   return jsonify(cart_content_to_show)
 
-@app.route('/api/cart/checkout', methods=['POST'])
+@application.route('/api/cart/checkout', methods=['POST'])
 @login_required
 def checkout():
   user = User.query.get(current_user.id)
@@ -205,4 +228,4 @@ def checkout():
 
 
 if __name__ == "__main__":
-  app.run(debug=True)
+  application.run(debug=True)
